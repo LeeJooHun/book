@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WatchaPedia Clone</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+        .navbar {
+            background-color: #333;
+            color: white;
+            padding: 1em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 0 1em;
+        }
+        .header {
+            text-align: center;
+            padding: 2em;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .container {
+            padding: 2em;
+        }
+        .movie-card {
+            background-color: white;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+        }
+        .movie-card img {
+            width: 100px;
+            height: 150px;
+            border-radius: 8px;
+            margin-right: 1em;
+        }
+        .movie-details {
+            flex: 1;
+        }
+        .movie-details h2 {
+            margin: 0 0 0.5em 0;
+        }
+        .movie-details p {
+            margin: 0.5em 0;
+        }
+    </style>
+</head>
+<body>
+<div class="navbar">
+    <div class="logo">WatchaPedia</div>
+    <div>
+        <a href="#">Home</a>
+        <a href="#">Movies</a>
+        <a href="#">TV Shows</a>
+        <a href="#">Books</a>
+        <a href="#">Login</a>
+    </div>
+</div>
+<div class="header">
+    <h1>Welcome to WatchaPedia</h1>
+    <p>Your personal movie and TV show database</p>
+</div>
+<div class="container">
+    <div class="movie-card">
+        <img src="https://via.placeholder.com/100x150" alt="Movie Poster">
+        <div class="movie-details">
+            <h2>Movie Title</h2>
+            <p>Genre: Action, Adventure</p>
+            <p>Rating: 4.5/5</p>
+            <p>Summary: Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+        </div>
+    </div>
+    <div class="movie-card">
+        <img src="https://via.placeholder.com/100x150" alt="Movie Poster">
+        <div class="movie-details">
+            <h2>Another Movie</h2>
+            <p>Genre: Drama, Romance</p>
+            <p>Rating: 4.2/5</p>
+            <p>Summary: Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+        </div>
+    </div>
+</div>
+</body>
+</html>

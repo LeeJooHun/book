@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Page</title>
+</head>
+<body>
+<h1>My Page</h1>
+<div>
+    <h2>Uploaded Image</h2>
+    <img id="uploadedImage" src="/images/{{userId}}" alt="Uploaded Image" width="300">
+</div>
+<form method="post" action="/images/upload" enctype="multipart/form-data">
+    <input type="file" name="file"/>
+    <button type="submit">Upload</button>
+</form>
+</body>
+</html>

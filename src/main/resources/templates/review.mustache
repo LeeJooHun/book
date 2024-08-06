@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Reviews</title>
+    <link rel="stylesheet" href="/css/review.css">
+    <link href="/css/styles.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/charts.css/dist/charts.min.css">
+</head>
+
+{{>layouts/header}}
+
+<body>
+<div class="container">
+    <div class="book-title">
+        <h2>{{book.title}}</h2>
+        <p>{{book.author}}</p>
+    </div>
+    <hr>
+    <div class="content">
+        <div class="book-info">
+            <img src="{{book.image}}" style="margin-bottom: 20px;">
+            <div id="bar-example-13">
+                <table class="charts-css bar show-labels show-primary-axis show-data-axes data-spacing-10">
+                    <caption> Bar Example #13 </caption>
+                    <thead>
+                    <tr><th scope="col">Year</th>
+                        <th scope="col">Progress</th></tr>
+                    </thead>
+                    <tbody>
+                    <tr><th scope="row">5점({{rating5}}명)</th><td style="--size: {{rating5}}/{{size}};"></td></tr>
+                    <tr><th scope="row">4점({{rating4}}명)</th><td style="--size: {{rating4}}/{{size}};"></td></tr>
+                    <tr><th scope="row">3점({{rating3}}명)</th><td style="--size: {{rating3}}/{{size}};"></td></tr>
+                    <tr><th scope="row">2점({{rating2}}명)</th><td style="--size: {{rating2}}/{{size}};"></td></tr>
+                    <tr><th scope="row">1점({{rating1}}명)</th><td style="--size: {{rating1}}/{{size}};"></td></tr>
+                    <tr><th scope="row">0점({{rating0}}명)</th><td style="--size: {{rating0}}/{{size}};"></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="reviews">
+            <h1 style="display: inline-block; margin: 0;">
+                <div class="bi-star-fill">{{average}}</div>
+            </h1>
+            <h4 style="display: inline-block; margin: 0 0 5px 0;">({{size}}명)</h4>
+            <h1>
+                <button class="review-button" id="openModalBtn">리뷰 남기기</button>
+            </h1>
+
+            <p class="review-date; margin: 0 0 10px 0;">{{{book.description}}}</p>
+        </div>
+    </div>
+    <hr>
+
+    <div class="reviews">
+        {{#reviews}}
+            <div class="review">
+                <div class="review-header">
+                    <img src="/images/{{user.id}}">
+                    <a href="/mypage/{{user.id}}"><span>{{user.name}}</span></a>
+                    <div class="bi-star-fill">{{rating}}</div>
+                </div>
+                <p class="review-date">{{date}}</p>
+                <div class="review-content">
+                    <p>{{content}}</p>
+                    <div class="review-actions">
+                        <button class="like edit" data-id="{{id}}" data-isbn="{{isbn}}" data-title="{{title}}" data-image="{{image}}" data-content="{{content}}">수정</button>
+                        <form action="/review/delete/{{id}}" method="post" onsubmit="return confirmDelete()">
+                            <button class="comment">삭제</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {{/reviews}}
+    </div>
+</div>
+
+<!-- 리뷰 모달창 -->
+<form class="container" action="/review/update" method="post">
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close" data-modal="myModal">&times;</span>
+            <h2 id="modalTitle">리뷰 수정하기</h2>
+            <div class="stars">
+                <span data-value="1">&#9733;</span>
+                <span data-value="2">&#9733;</span>
+                <span data-value="3">&#9733;</span>
+                <span data-value="4">&#9733;</span>
+                <span data-value="5">&#9733;</span>
+                <input type="hidden" name="id" value="">
+                <input type="hidden" name="rating" value="0">
+                <input type="hidden" name="isbn" value="">
+                <input type="hidden" name="title" value="">
+                <input type="hidden" name="image" value="">
+                <span>0</span>
+            </div>
+            <textarea class="review-text" name="content" placeholder=""></textarea>
+            <button type="submit" class="submit-button">작성완료</button>
+        </div>
+    </div>
+</form>
+
+<form class="container" action="/review/create" method="post">
+    <div id="myModal2" class="modal">
+        <div class="modal-content">
+            <span class="close" data-modal="myModal2">&times;</span>
+            <h2 id="modalTitle">리뷰 남기기</h2>
+            <div class="stars">
+                <span data-value="1">&#9733;</span>
+                <span data-value="2">&#9733;</span>
+                <span data-value="3">&#9733;</span>
+                <span data-value="4">&#9733;</span>
+                <span data-value="5">&#9733;</span>
+                <input type="hidden" name="rating" value="0">
+                <input type="hidden" name="isbn" value="">
+                <input type="hidden" name="title" value="">
+                <input type="hidden" name="image" value="">
+                <span>0</span>
+            </div>
+            <textarea class="review-text" name="content" placeholder="책에 관한 리뷰글을 써 주세요."></textarea>
+            <button type="submit" class="submit-button">작성완료</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    // 모달창 관련 스크립트
+    var modals = document.querySelectorAll('.modal');
+    var closeButtons = document.querySelectorAll('.close');
+
+    // 모달 열기 함수
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = "block";
+    }
+
+    // 모달 닫기 함수
+    function closeModal(modal) {
+        modal.style.display = "none";
+    }
+
+    // 리뷰 남기기 버튼 클릭 시 모달 열기
+    document.getElementById("openModalBtn").addEventListener("click", function() {
+        var modal = document.getElementById("myModal2");
+
+        // 현재 책 정보를 모달에 설정
+        modal.querySelector("input[name='isbn']").value = "{{book.isbn}}";
+        modal.querySelector("input[name='title']").value = "{{book.title}}";
+        modal.querySelector("input[name='image']").value = "{{book.image}}";
+
+        openModal("myModal2");
+    });
+
+    // 수정 버튼 클릭 시 모달 열기
+    document.querySelectorAll(".review-actions .edit").forEach(button => {
+        button.addEventListener("click", function() {
+            var id = this.getAttribute("data-id");
+            var title = this.getAttribute("data-title");
+            var image = this.getAttribute("data-image");
+            var isbn = this.getAttribute("data-isbn");
+            var content = this.getAttribute("data-content");
+            var textarea = document.querySelector('.review-text');
+
+            var modal = document.getElementById("myModal");
+            document.getElementById("modalTitle").textContent = title;
+            modal.querySelector("input[name='id']").value = id;
+            modal.querySelector("input[name='isbn']").value = isbn;
+            modal.querySelector("input[name='title']").value = title;
+            modal.querySelector("input[name='image']").value = image;
+            textarea.placeholder = content;
+
+            openModal("myModal");
+        });
+    });
+
+    // 닫기 버튼 클릭 시 모달 닫기
+    closeButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            var modalId = this.getAttribute('data-modal');
+            var modal = document.getElementById(modalId);
+            closeModal(modal);
+        });
+    });
+
+    // 모달 외부 클릭 시 모달 닫기
+    window.addEventListener('click', function(event) {
+        modals.forEach(modal => {
+            if (event.target === modal) {
+                closeModal(modal);
+            }
+        });
+    });
+
+    // 별점 클릭 이벤트
+    function setupStarRatings(modalId) {
+        var modal = document.getElementById(modalId);
+        var stars = modal.querySelectorAll(".stars span[data-value]");
+        var ratingDisplay = modal.querySelector(".stars span:last-child");
+        var ratingInput = modal.querySelector(".stars input[name='rating']");
+
+        stars.forEach(star => {
+            star.onclick = function() {
+                var rating = star.getAttribute('data-value');
+                ratingInput.value = rating;
+                ratingDisplay.textContent = rating;
+                stars.forEach(s => {
+                    s.style.color = s.getAttribute('data-value') <= rating ? '#ffc107' : '#ccc';
+                });
+            };
+        });
+    }
+
+    // 별점 설정
+    setupStarRatings("myModal");
+    setupStarRatings("myModal2");
+
+    // 삭제 확인 함수
+    function confirmDelete() {
+        return confirm("나 삭제할꼬얌?");
+    }
+</script>
+</body>
+</html>

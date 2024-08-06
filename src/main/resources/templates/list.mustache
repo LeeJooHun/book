@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>책 리스트</title>
+    <link rel="stylesheet" href="css/list.css">
+    <link href="/css/styles.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+
+        .book-list {
+            width: 80%;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .book-item {
+            background-color: white;
+            padding: 1em;
+            margin: 1em 0;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .book-item-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+        .book-image {
+            width: 100px;
+            height: 150px;
+            margin-right: 20px;
+        }
+
+        .book-details {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        .book-info {
+            max-width: 60%;
+        }
+
+        .book-info span {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .book-title {
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .book-price {
+            color: red;
+            font-weight: bold;
+        }
+
+        .book-buttons {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .book-buttons .btn {
+            padding: 10px;
+            margin-bottom: 5px;
+            border: none;
+            background-color: #f8f8f8;
+            cursor: pointer;
+        }
+
+        .book-buttons .btn:hover {
+            background-color: #ddd;
+        }
+
+        .book-buttons .cart {
+            background-color: #ff6b6b;
+            color: white;
+        }
+
+        .book-buttons .buy {
+            background-color: #4caf50;
+            color: white;
+        }
+
+        .book-buttons .save {
+            background-color: #2196f3;
+            color: white;
+        }
+
+        /* 모달 창 스타일 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.4);
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+            border-radius: 10px;
+            position: relative;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .stars {
+            font-size: 24px;
+            color: #ffc107;
+            display: flex;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        .stars span {
+            cursor: pointer;
+        }
+
+        .review-text {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 20px;
+        }
+
+        .submit-button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            margin: 0 auto;
+        }
+
+
+    </style>
+</head>
+<body>
+{{>layouts/header}}
+<div class="book-list">
+    {{#books}}
+        <a href="/review/{{isbn}}" class="book-item-link">
+            <div class="book-item">
+                <img src="{{image}}" alt="{{title}}" class="book-image">
+                <div class="book-details">
+                    <div class="book-info">
+                        <span class="book-type">{{isbn}}</span>
+                        <span class="book-title">{{title}}</span>
+                        <span class="book-author">저자: {{author}}</span>
+                        <span class="book-price">{{publisher}}</span>
+                        <span class="book-pubdate">{{pubdate}}</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    {{/books}}
+</div>
+
+<!-- 리뷰 모달창 -->
+<form class="container" action="/review/create" method="post">
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2 id="modalTitle">리뷰 남기기</h2>
+            <div class="stars">
+                <span data-value="1">&#9733;</span>
+                <span data-value="2">&#9733;</span>
+                <span data-value="3">&#9733;</span>
+                <span data-value="4">&#9733;</span>
+                <span data-value="5">&#9733;</span>
+                <input type="hidden" name="rating" value="0">
+                <input type="hidden" name="isbn" value="">
+                <input type="hidden" name="title" value="">
+                <input type="hidden" name="image" value="">
+                <span>0</span>
+            </div>
+            <textarea class="review-text" name="content" placeholder="책에 관한 리뷰글을 써 주세요."></textarea>
+            <button type="submit" class="submit-button">작성완료</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    // 리뷰 모달창 관련 스크립트
+    var modal = document.getElementById("myModal");
+    var span = document.getElementsByClassName("close")[0];
+    var stars = document.querySelectorAll(".stars span[data-value]");
+    var ratingDisplay = document.querySelector(".stars span:last-child");
+    var ratingInput = document.querySelector(".stars input[name='rating']");
+    var modalTitle = document.getElementById("modalTitle");
+
+    // 장바구니 버튼 클릭 시 모달창 열기
+    var cartButtons = document.querySelectorAll(".btn.cart");
+    cartButtons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            var title = this.getAttribute("data-title");
+            var image = this.getAttribute("data-image");
+            var isbn = this.parentElement.parentElement.querySelector(".book-type").textContent;
+            modalTitle.textContent = title;
+            // isbn, title, image 값을 hidden input에 할당
+            document.querySelector("input[name='isbn']").value = isbn;
+            document.querySelector("input[name='title']").value = title;
+            document.querySelector("input[name='image']").value = image;
+            modal.style.display = "block";
+        });
+    });
+
+    // 모달창 닫기
+    span.onclick = function() {
+        modal.style.display = "none";
+    }
+
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+    // 별점 클릭 이벤트
+    stars.forEach(star => {
+        star.onclick = function() {
+            var rating = star.getAttribute('data-value');
+            ratingInput.value = rating;
+            ratingDisplay.textContent = rating;
+            stars.forEach(s => {
+                s.style.color = s.getAttribute('data-value') <= rating ? '#ffc107' : '#ccc';
+            });
+        }
+    });
+</script>
+</body>
+</html>

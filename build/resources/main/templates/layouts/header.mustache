@@ -1,0 +1,27 @@
+<script src="https://kit.fontawesome.com/a442f8451a.js" crossorigin="anonymous"></script>
+<div class="navbar">
+    <a href="/main">소연짱</a>
+
+    <div class="searchmy">
+        <form class="search" onsubmit="return handleSearch(event)">
+            <input type="text" id="searchInput" placeholder="책 정보를 입력하세요">
+            <img id="searchImg" src="https://s3.ap-northeast-2.amazonaws.com/cdn.wecode.co.kr/icon/search.png">
+        </form>
+        {{#user}}
+            <a href="/main/mypage"><i class="fa-solid fa-user"></i></a>
+        {{/user}}
+        {{^user}}
+            <a href="/login">Login</a>
+        {{/user}}
+    </div>
+</div>
+
+<script>
+    function handleSearch(event) {
+      event.preventDefault(); // Prevent the default form submission
+      const query = document.getElementById('searchInput').value; // Get the search input value
+      const url = `/books?text=${encodeURIComponent(query)}`; // Create the URL with the search query
+      window.location.href = url; // Redirect to the URL
+    }
+</script>
+
