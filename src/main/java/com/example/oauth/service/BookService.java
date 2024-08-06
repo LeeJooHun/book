@@ -4,7 +4,6 @@ import com.example.oauth.dto.ReviewDto;
 import com.example.oauth.entity.Book;
 import com.example.oauth.entity.Review;
 import com.example.oauth.repository.BookRepository;
-import com.example.oauth.vo.BookVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
