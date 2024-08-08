@@ -19,33 +19,38 @@ public class BookService {
 
     private final BookRepository bookRepository;
 
+    public Book findByIsbn(String isbn){
+        return bookRepository.findByIsbn(isbn);
+    }
+
     @Transactional
-    public void save(Review review){
-        Book book = bookRepository.findByIsbn(review.getIsbn());
+    public Book save(ReviewDto reviewDto){
+        Book book = bookRepository.findByIsbn(reviewDto.getIsbn());
         if(book != null){
-            double sum = book.getAverage() * book.getRatingCount() + review.getRating();
+            double sum = book.getAverage() * book.getRatingCount() + reviewDto.getRating();
             book.setRatingCount(book.getRatingCount() + 1);
             book.setAverage(sum / book.getRatingCount());
             bookRepository.save(book);
         }
         else{
-            book = new Book(null, review.getIsbn(), review.getTitle(), review.getImage(), review.getRating(), 1);
+            book = reviewDto.toBook();
             bookRepository.save(book);
         }
+        return book;
     }
 
     @Transactional
-    public void update(Review target, Review review){
-        Book book = bookRepository.findByIsbn(review.getIsbn());
-        double sum = book.getAverage() * book.getRatingCount() - target.getRating() + review.getRating();
+    public void update(Review target, ReviewDto reviewDto){
+        Book book = bookRepository.findByIsbn(reviewDto.getIsbn());
+        double sum = book.getAverage() * book.getRatingCount() - target.getRating() + reviewDto.getRating();
         book.setAverage(sum / book.getRatingCount());
         bookRepository.save(book);
     }
 
     @Transactional
-    public void delete(Review review){
-        Book book = bookRepository.findByIsbn(review.getIsbn());
-        double sum = book.getAverage() * book.getRatingCount() - review.getRating();
+    public void delete(String isbn, Review target){
+        Book book = bookRepository.findByIsbn(isbn);
+        double sum = book.getAverage() * book.getRatingCount() - target.getRating();
         book.setRatingCount(book.getRatingCount() - 1);
 
         if(book.getRatingCount() == 0){
@@ -61,5 +66,6 @@ public class BookService {
         Collections.sort(bookList, Comparator.comparingDouble(Book::getAverage).reversed());
         return bookList;
     }
+
 
 }

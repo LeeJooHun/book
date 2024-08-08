@@ -1,6 +1,7 @@
 package com.example.oauth.controller;
 
 import com.example.oauth.dto.ReviewDto;
+import com.example.oauth.entity.Book;
 import com.example.oauth.entity.Review;
 import com.example.oauth.entity.UserEntity;
 import com.example.oauth.service.*;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -23,7 +25,11 @@ public class ReviewController {
 
     private final SearchService searchService;
 
+    private final BookService bookService;
+
     private final ReviewService reviewService;
+
+    private final BookAndReviewService bookAndReviewService;
 
     @GetMapping("/review")
     public String reviewP(){
@@ -32,16 +38,19 @@ public class ReviewController {
 
     @GetMapping("/review/{isbn}")
     public String reviewPage(@PathVariable String isbn, Model model){
-        List<Review> reviews = reviewService.findByIsbn(isbn);
+        Book book = bookService.findByIsbn(isbn);
+        List<Review> reviews = new ArrayList<>();
+        if(book != null)
+            reviews = book.getReviews();
         int ratings[] = reviewService.calculateRatings(reviews);
         double averageRating = reviewService.calculateAverageRating(reviews);
 
         DecimalFormat decimalFormat = new DecimalFormat("#.#");
         String formattedRating = decimalFormat.format(averageRating);
 
-        BookVO book = searchService.getBookByIsbn(isbn);
+        BookVO searchBook = searchService.getBookByIsbn(isbn);
 
-        model.addAttribute("book", book);
+        model.addAttribute("book", searchBook);
         model.addAttribute("reviews", reviews);
         model.addAttribute("size", reviews.size());
         model.addAttribute("average", formattedRating);
@@ -60,19 +69,19 @@ public class ReviewController {
 
     @PostMapping("/review/create")
     public String createReview(ReviewDto reviewDto){
-        Review review = reviewService.save(reviewDto);
-        return "redirect:/review/" + review.getIsbn();
+        String isbn = bookAndReviewService.save(reviewDto);
+        return "redirect:/review/" + isbn;
     }
 
     @PostMapping("/review/update")
     public String updateReview(ReviewDto reviewDto){
-        Review review = reviewService.update(reviewDto);
-        return "redirect:/review/" + review.getIsbn();
+        String isbn = bookAndReviewService.update(reviewDto);
+        return "redirect:/review/" + isbn;
     }
 
-    @PostMapping("/review/delete/{id}")
-    public String deleteReview(@PathVariable Long id){
-        Review review = reviewService.delete(id);
-        return "redirect:/review/" + review.getIsbn();
+    @PostMapping("/review/delete/{isbn}/{id}")
+    public String deleteReview(@PathVariable String isbn, @PathVariable Long id){
+        bookAndReviewService.delete(isbn, id);
+        return "redirect:/review/" + isbn;
     }
 }

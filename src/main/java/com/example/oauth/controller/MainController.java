@@ -1,5 +1,6 @@
 package com.example.oauth.controller;
 
+import com.example.oauth.dto.ReviewDto;
 import com.example.oauth.entity.Book;
 import com.example.oauth.entity.Review;
 import com.example.oauth.entity.UserEntity;
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -25,7 +27,11 @@ public class  MainController {
 
     @GetMapping("/main")
     public String mainPage(Model model) {
-        List<Review> reviewList = reviewService.findAllReverse();
+        List<Review> reviews = reviewService.findAllReverse();
+        List<ReviewDto> reviewList = new ArrayList<>();
+        for(Review review : reviews){
+            reviewList.add(review.toDto(review.getBook().getIsbn(), review.getBook().getTitle(), review.getBook().getImage()));
+        }
         model.addAttribute("reviewList", reviewList);
 
         List<Book> bookList = bookService.findBooksByAverageDesc();

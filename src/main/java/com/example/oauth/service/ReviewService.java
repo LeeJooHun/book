@@ -1,6 +1,7 @@
 package com.example.oauth.service;
 
 import com.example.oauth.dto.ReviewDto;
+import com.example.oauth.entity.Book;
 import com.example.oauth.entity.Review;
 import com.example.oauth.entity.UserEntity;
 import com.example.oauth.repository.ReviewRepository;
@@ -18,20 +19,12 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-    private final UserService userService;
-
-    private final BookService bookService;
-
     public List<Review> findAllReverse(){
         List<Review> reviewList = reviewRepository.findAll();
         Collections.reverse(reviewList);
         return reviewList;
     }
 
-    public List<Review> findByIsbn(String isbn){
-        List<Review> reviewList = reviewRepository.findByIsbn(isbn);
-        return reviewList;
-    }
 
     public List<Review> findByUserReverse(UserEntity user){
         List<Review> reviewList = reviewRepository.findByUser(user);
@@ -39,38 +32,27 @@ public class ReviewService {
         return reviewList;
     }
 
+    public Review findById(Long id){
+        return reviewRepository.findById(id).orElse(null);
+    }
 
-    public Review save(ReviewDto reviewDto){
-        Review review = reviewDto.toEntity();
-        UserEntity user = userService.getUser();
-        if(user != null) {
-            review.setUser(user);
-            reviewRepository.save(review);
-            bookService.save(review);
-        }
+
+    public Review save(ReviewDto reviewDto, Book book){
+        Review review = reviewDto.toReview();
+        review.setBook(book);
+        reviewRepository.save(review);
         return review;
     }
 
-    public Review update(ReviewDto reviewDto){
-        Review review = reviewDto.toEntity();
-        Review target = reviewRepository.findById(review.getId()).orElse(null);
-        UserEntity user = userService.getUser();
-        if(target.getUser().equals(user)) {
-            review.setUser(user);
-            reviewRepository.save(review);
-            bookService.update(target, review);
-        }
+    public Review update(Review target, ReviewDto reviewDto){
+        Review review = reviewDto.toReview();
+        review.setBook(target.getBook());
+        reviewRepository.save(review);
         return review;
     }
 
-    public Review delete(Long id){
-        Review review = reviewRepository.findById(id).orElse(null);
-        UserEntity user = userService.getUser();
-        if(review.getUser().equals(user)) {
-            reviewRepository.delete(review);
-            bookService.delete(review);
-        }
-        return review;
+    public void delete(Review target){
+        reviewRepository.delete(target);
     }
 
     public Map<Integer, Long> calculateRatingDistribution(List<Review> reviews) {

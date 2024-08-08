@@ -67,8 +67,9 @@
                 <div class="review-content">
                     <p>{{content}}</p>
                     <div class="review-actions">
-                        <button class="like edit" data-id="{{id}}" data-isbn="{{isbn}}" data-title="{{title}}" data-image="{{image}}" data-content="{{content}}">수정</button>
-                        <form action="/review/delete/{{id}}" method="post" onsubmit="return confirmDelete()">
+                        <button class="like edit" data-id="{{id}}" data-isbn="{{book.isbn}}" data-title="{{book.title}}"
+                                 data-image="{{book.image}}" data-content="{{content}}">수정</button>
+                        <form action="/review/delete/{{isbn}}/{{id}}" method="post" onsubmit="return confirmDelete()">
                             <button class="comment">삭제</button>
                         </form>
                     </div>
@@ -78,7 +79,6 @@
     </div>
 </div>
 
-<!-- 리뷰 모달창 -->
 <form class="container" action="/review/update" method="post">
     <div id="myModal" class="modal">
         <div class="modal-content">
@@ -127,21 +127,17 @@
 </form>
 
 <script>
-    // 모달창 관련 스크립트
     var modals = document.querySelectorAll('.modal');
     var closeButtons = document.querySelectorAll('.close');
 
-    // 모달 열기 함수
     function openModal(modalId) {
         document.getElementById(modalId).style.display = "block";
     }
 
-    // 모달 닫기 함수
     function closeModal(modal) {
         modal.style.display = "none";
     }
 
-    // 리뷰 남기기 버튼 클릭 시 모달 열기
     document.getElementById("openModalBtn").addEventListener("click", function() {
         var modal = document.getElementById("myModal2");
 
@@ -153,7 +149,6 @@
         openModal("myModal2");
     });
 
-    // 수정 버튼 클릭 시 모달 열기
     document.querySelectorAll(".review-actions .edit").forEach(button => {
         button.addEventListener("click", function() {
             var id = this.getAttribute("data-id");
@@ -169,13 +164,12 @@
             modal.querySelector("input[name='isbn']").value = isbn;
             modal.querySelector("input[name='title']").value = title;
             modal.querySelector("input[name='image']").value = image;
-            textarea.placeholder = content;
+            textarea.value = content; // 수정된 부분: placeholder가 아닌 value를 설정
 
             openModal("myModal");
         });
     });
 
-    // 닫기 버튼 클릭 시 모달 닫기
     closeButtons.forEach(button => {
         button.addEventListener('click', function() {
             var modalId = this.getAttribute('data-modal');
@@ -184,7 +178,6 @@
         });
     });
 
-    // 모달 외부 클릭 시 모달 닫기
     window.addEventListener('click', function(event) {
         modals.forEach(modal => {
             if (event.target === modal) {
@@ -193,7 +186,6 @@
         });
     });
 
-    // 별점 클릭 이벤트
     function setupStarRatings(modalId) {
         var modal = document.getElementById(modalId);
         var stars = modal.querySelectorAll(".stars span[data-value]");
@@ -212,11 +204,9 @@
         });
     }
 
-    // 별점 설정
     setupStarRatings("myModal");
     setupStarRatings("myModal2");
 
-    // 삭제 확인 함수
     function confirmDelete() {
         return confirm("나 삭제할꼬얌?");
     }

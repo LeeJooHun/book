@@ -3,6 +3,8 @@ package com.example.oauth.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
@@ -28,4 +30,7 @@ public class Book {
 
     @Column
     private int ratingCount;
+
+    @OneToMany(mappedBy = "book")
+    private List<Review> reviews;
 }

@@ -10,7 +10,5 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
     @Override
     ArrayList<Review> findAll();
 
-    ArrayList<Review> findByIsbn(String isbn);
-
     ArrayList<Review> findByUser(UserEntity user);
 }
