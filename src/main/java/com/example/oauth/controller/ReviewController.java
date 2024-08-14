@@ -22,38 +22,25 @@ import java.util.List;
 public class ReviewController {
 
     private final UserService userService;
-
     private final SearchService searchService;
-
     private final BookService bookService;
-
     private final ReviewService reviewService;
-
     private final BookAndReviewService bookAndReviewService;
-
-    @GetMapping("/review")
-    public String reviewP(){
-        return "review";
-    }
 
     @GetMapping("/review/{isbn}")
     public String reviewPage(@PathVariable String isbn, Model model){
-        Book book = bookService.findByIsbn(isbn);
-        List<Review> reviews = new ArrayList<>();
-        if(book != null)
-            reviews = book.getReviews();
-        int ratings[] = reviewService.calculateRatings(reviews);
-        double averageRating = reviewService.calculateAverageRating(reviews);
-
-        DecimalFormat decimalFormat = new DecimalFormat("#.#");
-        String formattedRating = decimalFormat.format(averageRating);
 
         BookVO searchBook = searchService.getBookByIsbn(isbn);
-
         model.addAttribute("book", searchBook);
-        model.addAttribute("reviews", reviews);
-        model.addAttribute("size", reviews.size());
-        model.addAttribute("average", formattedRating);
+
+        UserEntity user = userService.getUser();
+        model.addAttribute("user", user);
+
+        List<Review> reviewList = bookService.getReviewList(isbn, user);
+        model.addAttribute("reviewList", reviewList);
+        model.addAttribute("size", reviewList.size());
+
+        int ratings[] = reviewService.calculateRatings(reviewList);
         model.addAttribute("rating5", ratings[5]);
         model.addAttribute("rating4", ratings[4]);
         model.addAttribute("rating3", ratings[3]);
@@ -61,8 +48,8 @@ public class ReviewController {
         model.addAttribute("rating1", ratings[1]);
         model.addAttribute("rating0", ratings[0]);
 
-        UserEntity user = userService.getUser();
-        model.addAttribute("user", user);
+        String average = reviewService.calculateAverageRating(reviewList);
+        model.addAttribute("average", average);
 
         return "review";
     }

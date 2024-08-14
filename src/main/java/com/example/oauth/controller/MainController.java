@@ -27,12 +27,8 @@ public class  MainController {
 
     @GetMapping("/main")
     public String mainPage(Model model) {
-        List<Review> reviews = reviewService.findAllReverse();
-        List<ReviewDto> reviewList = new ArrayList<>();
-        for(Review review : reviews){
-            reviewList.add(review.toDto(review.getBook().getIsbn(), review.getBook().getTitle(), review.getBook().getImage()));
-        }
-        model.addAttribute("reviewList", reviewList);
+        List<ReviewDto> reviewDtoList = reviewService.findRecentFourReviews();
+        model.addAttribute("reviewDtoList", reviewDtoList);
 
         List<Book> bookList = bookService.findBooksByAverageDesc();
         model.addAttribute("bookList", bookList);
@@ -41,6 +37,17 @@ public class  MainController {
         model.addAttribute("user", user);
 
         return "main";
+    }
+
+    @GetMapping("/recent-reviews")
+    public String recentReviewPage(Model model){
+        List<ReviewDto> reviewDtoList = reviewService.findAllReverse();
+        model.addAttribute("reviewDtoList", reviewDtoList);
+
+        UserEntity user = userService.getUser();
+        model.addAttribute("user", user);
+
+        return "recentReviews";
     }
 
     @GetMapping("/")

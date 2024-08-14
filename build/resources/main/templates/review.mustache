@@ -51,12 +51,12 @@
             </h1>
 
             <p class="review-date; margin: 0 0 10px 0;">{{{book.description}}}</p>
-        </div>
+        </div>z
     </div>
     <hr>
 
     <div class="reviews">
-        {{#reviews}}
+        {{#reviewList}}
             <div class="review">
                 <div class="review-header">
                     <img src="/images/{{user.id}}">
@@ -66,6 +66,8 @@
                 <p class="review-date">{{date}}</p>
                 <div class="review-content">
                     <p>{{content}}</p>
+
+                    {{#isOwner}}
                     <div class="review-actions">
                         <button class="like edit" data-id="{{id}}" data-isbn="{{book.isbn}}" data-title="{{book.title}}"
                                  data-image="{{book.image}}" data-content="{{content}}">수정</button>
@@ -73,9 +75,11 @@
                             <button class="comment">삭제</button>
                         </form>
                     </div>
+                    {{/isOwner}}
+
                 </div>
             </div>
-        {{/reviews}}
+        {{/reviewList}}
     </div>
 </div>
 

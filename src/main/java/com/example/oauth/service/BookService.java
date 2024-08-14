@@ -3,6 +3,7 @@ package com.example.oauth.service;
 import com.example.oauth.dto.ReviewDto;
 import com.example.oauth.entity.Book;
 import com.example.oauth.entity.Review;
+import com.example.oauth.entity.UserEntity;
 import com.example.oauth.repository.BookRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,21 @@ public class BookService {
 
     public Book findByIsbn(String isbn){
         return bookRepository.findByIsbn(isbn);
+    }
+
+    public List<Review> getReviewList(String isbn, UserEntity user){
+        Book book = findByIsbn(isbn);
+        List<Review> reviewList = new ArrayList<>();
+        if(book != null)
+            reviewList = book.getReviews();
+
+        for(Review review : reviewList){
+            if(user == null)
+                review.setOwner(false);
+            else
+                review.setOwner(user.getId() == review.getUser().getId());
+        }
+        return reviewList;
     }
 
     @Transactional

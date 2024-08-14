@@ -85,7 +85,7 @@
         {{#chk}}<button id="openModalBtn" class="profile-button">프로필 사진 변경</button>{{/chk}}
         <p style="font-size:20px; font-weight:bolder;">{{user.name}}의 책장({{size}}권)</p>
         <div class="row gx-4 gx-lg-5 row-cols-2 row-cols-md-3 row-cols-xl-4 justify-content-center">
-            {{#reviewList}}
+            {{#reviewDtoList}}
                 <div class="col mb-5"> <!-- mb-0을 mb-3으로 변경 -->
                     <div class="card h-100">
                         <img class="card-img-top" src="{{image}}" alt="..." />
@@ -108,7 +108,7 @@
                         </div>
                     </div>
                 </div>
-            {{/reviewList}}
+            {{/reviewDtoList}}
         </div>
     </div>
 </section>

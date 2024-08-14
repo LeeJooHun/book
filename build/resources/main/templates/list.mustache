@@ -177,7 +177,7 @@
 <body>
 {{>layouts/header}}
 <div class="book-list">
-    {{#books}}
+    {{#bookList}}
         <a href="/review/{{isbn}}" class="book-item-link">
             <div class="book-item">
                 <img src="{{image}}" alt="{{title}}" class="book-image">
@@ -192,7 +192,7 @@
                 </div>
             </div>
         </a>
-    {{/books}}
+    {{/bookList}}
 </div>
 
 <!-- 리뷰 모달창 -->

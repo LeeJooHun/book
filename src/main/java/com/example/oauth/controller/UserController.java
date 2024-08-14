@@ -1,5 +1,6 @@
 package com.example.oauth.controller;
 
+import com.example.oauth.dto.ReviewDto;
 import com.example.oauth.entity.Review;
 import com.example.oauth.entity.UserEntity;
 import com.example.oauth.service.ReviewService;
@@ -10,6 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class UserController {
     private final ReviewService reviewService;
 
     @GetMapping("/main/mypage")
-    public String myPage() {
+    public String check() {
         UserEntity user = userService.getUser();
         if (user == null) {
             return "redirect:/login";
@@ -29,17 +31,18 @@ public class UserController {
     }
 
     @GetMapping("/mypage/{id}")
-    public String myP(@PathVariable Long id, Model model){
+    public String myPage(@PathVariable Long id, Model model){
         UserEntity user = userService.findById(id);
         model.addAttribute("user", user);
+
         boolean chk = userService.check(user);
         model.addAttribute("chk", chk);
-        List<Review> reviewList = reviewService.findByUserReverse(user);
-        model.addAttribute("reviewList", reviewList);
-        model.addAttribute("size", reviewList.size());
+
+        List<ReviewDto> reviewDtoList = reviewService.findByUserReverse(user);
+        model.addAttribute("reviewDtoList", reviewDtoList);
+        model.addAttribute("size", reviewDtoList.size());
+
         return "mypage";
     }
-
-
 
 }

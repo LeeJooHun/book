@@ -39,6 +39,9 @@ public class Review {
         date = LocalDate.now();
     }
 
+    @Column
+    private boolean isOwner = false;
+
     public ReviewDto toDto(String isbn, String title, String image){
         return new ReviewDto(id, isbn, content, rating, title, image, user);
     }

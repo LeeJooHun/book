@@ -8,6 +8,8 @@ import com.example.oauth.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -19,17 +21,42 @@ public class ReviewService {
 
     private final ReviewRepository reviewRepository;
 
-    public List<Review> findAllReverse(){
+    public List<ReviewDto> findAllReverse(){
         List<Review> reviewList = reviewRepository.findAll();
         Collections.reverse(reviewList);
-        return reviewList;
+        List<ReviewDto> reviewDtoList = new ArrayList<>();
+        for(Review review : reviewList){
+            reviewDtoList.add(review.toDto(review.getBook().getIsbn(), review.getBook().getTitle(), review.getBook().getImage()));
+        }
+        return reviewDtoList;
+    }
+
+    public List<ReviewDto> findRecentFourReviews() {
+        List<Review> reviewList = reviewRepository.findAll();
+        Collections.reverse(reviewList);
+
+        List<Review> recentFourReviews = reviewList.stream()
+                .limit(4) // 최신 4개 리뷰만 남김
+                .collect(Collectors.toList());
+
+        List<ReviewDto> reviewDtoList = recentFourReviews.stream()
+                .map(review -> review.toDto(review.getBook().getIsbn(), review.getBook().getTitle(), review.getBook().getImage()))
+                .collect(Collectors.toList());
+
+        return reviewDtoList;
     }
 
 
-    public List<Review> findByUserReverse(UserEntity user){
+    public List<ReviewDto> findByUserReverse(UserEntity user){
         List<Review> reviewList = reviewRepository.findByUser(user);
         Collections.reverse(reviewList);
-        return reviewList;
+
+        List<ReviewDto> reviewDtoList = new ArrayList<>();
+        for(Review review : reviewList){
+            reviewDtoList.add(review.toDto(review.getBook().getIsbn(), review.getBook().getTitle(), review.getBook().getImage()));
+        }
+
+        return reviewDtoList;
     }
 
     public Review findById(Long id){
@@ -60,11 +87,14 @@ public class ReviewService {
                 .collect(Collectors.groupingBy(Review::getRating, Collectors.counting()));
     }
 
-    public double calculateAverageRating(List<Review> reviews) {
-        return reviews.stream()
+    public String calculateAverageRating(List<Review> reviews) {
+        double average = reviews.stream()
                 .mapToDouble(Review::getRating)
                 .average()
                 .orElse(0.0);
+        DecimalFormat decimalFormat = new DecimalFormat("#.#");
+        String formattedRating = decimalFormat.format(average);
+        return formattedRating;
     }
 
     public int[] calculateRatings(List<Review> reviews) {

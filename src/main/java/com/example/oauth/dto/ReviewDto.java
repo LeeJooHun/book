@@ -25,7 +25,7 @@ public class ReviewDto {
     private UserEntity user;
 
     public Review toReview(){
-        return new Review(id, content, rating, LocalDate.now(), user, null);
+        return new Review(id, content, rating, LocalDate.now(), user, null, false);
     }
 
     public Book toBook(){
