@@ -36,7 +36,7 @@ public class ReviewService {
         Collections.reverse(reviewList);
 
         List<Review> recentFourReviews = reviewList.stream()
-                .limit(4) // 최신 4개 리뷰만 남김
+                .limit(4)
                 .collect(Collectors.toList());
 
         List<ReviewDto> reviewDtoList = recentFourReviews.stream()

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Service
@@ -75,6 +76,17 @@ public class BookService {
         else {
             book.setAverage(sum / book.getRatingCount());
         }
+    }
+
+    public List<Book> findFourBooksByAverageDesc() {
+        List<Book> bookList = bookRepository.findAll();
+        Collections.sort(bookList, Comparator.comparingDouble(Book::getAverage).reversed());
+
+        List<Book> recentFourReviews = bookList.stream()
+                .limit(4)
+                .collect(Collectors.toList());
+
+        return recentFourReviews;
     }
 
     public List<Book> findBooksByAverageDesc() {

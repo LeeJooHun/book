@@ -30,7 +30,7 @@ public class  MainController {
         List<ReviewDto> reviewDtoList = reviewService.findRecentFourReviews();
         model.addAttribute("reviewDtoList", reviewDtoList);
 
-        List<Book> bookList = bookService.findBooksByAverageDesc();
+        List<Book> bookList = bookService.findFourBooksByAverageDesc();
         model.addAttribute("bookList", bookList);
 
         UserEntity user = userService.getUser();
@@ -48,6 +48,17 @@ public class  MainController {
         model.addAttribute("user", user);
 
         return "recentReviews";
+    }
+
+    @GetMapping("/high-reviews")
+    public String highReviewPage(Model model){
+        List<Book> bookList = bookService.findBooksByAverageDesc();
+        model.addAttribute("bookList", bookList);
+
+        UserEntity user = userService.getUser();
+        model.addAttribute("user", user);
+
+        return "highReviews";
     }
 
     @GetMapping("/")
