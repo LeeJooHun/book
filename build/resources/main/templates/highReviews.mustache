@@ -46,6 +46,28 @@
 
 </section>
 
+<nav aria-label="Page navigation example">
+    <ul class="pagination justify-content-center py-4">
+        <li class="page-item">
+            <a class="page-link" href=?page=1 aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+
+        {{#pageDtoList}}
+            <li class="page-item {{#check}}active{{/check}}"><a class="page-link" href="?page={{page}}">{{page}}</a></li>
+        {{/pageDtoList}}
+
+
+        <li class="page-item">
+            <a class="page-link" href=?page={{lastPage}} aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+    </ul>
+</nav>
+
+
 <!-- Footer-->
 <footer class="py-5 bg-dark">
     <div class="container"><p class="m-0 text-center text-white"></p></div>

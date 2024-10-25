@@ -2,11 +2,13 @@ package com.example.oauth.controller;
 
 import com.example.oauth.dto.ReviewDto;
 import com.example.oauth.entity.Book;
+import com.example.oauth.entity.Comment;
 import com.example.oauth.entity.Review;
 import com.example.oauth.entity.UserEntity;
 import com.example.oauth.service.*;
 import com.example.oauth.vo.BookVO;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,5 +72,15 @@ public class ReviewController {
     public String deleteReview(@PathVariable String isbn, @PathVariable Long id){
         bookAndReviewService.delete(isbn, id);
         return "redirect:/review/" + isbn;
+    }
+
+    @PostMapping("/book-club/{isbn}")
+    public ResponseEntity<?> setBookAsClubBook(@PathVariable String isbn) {
+        boolean success = searchService.setBookAsBookClub(isbn);
+        if (success) {
+            return ResponseEntity.ok().body("{\"success\": true}");
+        } else {
+            return ResponseEntity.badRequest().body("{\"success\": false}");
+        }
     }
 }

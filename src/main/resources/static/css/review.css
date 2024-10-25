@@ -1,6 +1,7 @@
 body {
     font-family: Arial, sans-serif;
     background-color: #f4f4f4;
+    overflow-y: auto;
     margin: 0;
     padding: 0;
 }
@@ -12,7 +13,7 @@ body {
     margin: 0 auto;
     padding: 20px;
     background-color: #fff;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
 }
 
 .content {
@@ -32,6 +33,30 @@ body {
     padding: 20px;
     box-sizing: border-box;
     text-align: center;
+}
+
+.container, .reviews {
+    height: auto; /* 고정 높이 제거 */
+    overflow: visible; /* 콘텐츠가 넘칠 때 숨기지 않도록 설정 */
+}
+
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+.content {
+    min-height: calc(100vh - 50px); /* 100vh에서 footer 높이만큼 뺀 값 */
+}
+
+footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    width: 100%;
+    height: 50px; /* footer 높이 */
+    position: relative;
 }
 
 .book-info img {
@@ -67,21 +92,18 @@ body {
 
 .reviews {
     width: 70%;
-    height: 800px;
+
     padding: 20px;
     box-sizing: border-box;
 }
 
 .review {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
-    border-bottom: 1px solid #ddd;
+
 }
 
 .review-header {
     display: flex;
     align-items: center;
-    margin-bottom: 10px;
 }
 
 .review-header img {
@@ -98,11 +120,11 @@ body {
 .review-date {
     font-size: 13px;
     color: #666;
-    margin-bottom : 50px;
 }
 
 .review-content {
     margin-top: 10px;
+    margin-bottom: 50px;
 }
 
 .tags span {

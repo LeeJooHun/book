@@ -1,6 +1,7 @@
 package com.example.oauth.service;
 
 import com.example.oauth.entity.Book;
+import com.example.oauth.repository.BookRepository;
 import com.example.oauth.vo.BookVO;
 import com.example.oauth.vo.NaverResultVO;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -23,7 +25,7 @@ import java.util.List;
 @Service
 public class SearchService {
 
-    private final BookService bookService;
+    private final BookRepository bookRepository;
 
     public List<BookVO> bookSearch(String text){
         // 네이버 검색 API 요청
@@ -74,5 +76,20 @@ public class SearchService {
         book.setDescription(bookDescription);
         return book;
     }
+
+    @Transactional
+    public boolean setBookAsBookClub(String isbn) {
+        Book book = bookRepository.findByIsbn(isbn);
+        if(book == null) {
+            BookVO searchBook = getBookByIsbn(isbn);
+            book = new Book(null, isbn, searchBook.getTitle(), searchBook.getImage(), 0, 0, true, null);
+        }
+        book.setBookClub(true);
+        bookRepository.save(book);
+
+        return true;
+    }
+
+
 
 }

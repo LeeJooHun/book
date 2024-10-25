@@ -6,6 +6,10 @@ import com.example.oauth.entity.Review;
 import com.example.oauth.entity.UserEntity;
 import com.example.oauth.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
@@ -30,6 +34,27 @@ public class ReviewService {
         }
         return reviewDtoList;
     }
+
+    public Page<ReviewDto> findAllReverse(int page) {
+        // 페이지 인덱스를 1부터 시작하도록 변환
+        int adjustedPage = page > 0 ? page - 1 : 0;
+
+        List<Review> reviewList = reviewRepository.findAllByOrderByIdDesc();
+
+        // Review를 ReviewDto로 변환
+        List<ReviewDto> reviewDtoList = new ArrayList<>();
+        for (Review review : reviewList) {
+            reviewDtoList.add(review.toDto(review.getBook().getIsbn(), review.getBook().getTitle(), review.getBook().getImage()));
+        }
+
+        // 페이지 처리
+        Pageable pageable = PageRequest.of(adjustedPage, 8);
+        int start = (int) pageable.getOffset();
+        int end = Math.min((start + pageable.getPageSize()), reviewDtoList.size());
+
+        return new PageImpl<>(reviewDtoList.subList(start, end), pageable, reviewDtoList.size());
+    }
+
 
     public List<ReviewDto> findRecentFourReviews() {
         List<Review> reviewList = reviewRepository.findAll();

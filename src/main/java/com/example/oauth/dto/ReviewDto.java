@@ -25,10 +25,10 @@ public class ReviewDto {
     private UserEntity user;
 
     public Review toReview(){
-        return new Review(id, content, rating, LocalDate.now(), user, null, false);
+        return new Review(id, content, rating, LocalDate.now(), user, null, false, false, null, 0, null);
     }
 
     public Book toBook(){
-        return new Book(null, isbn, title, image, rating, 1, null);
+        return new Book(null, isbn, title, image, rating, 1, false,null);
     }
 }

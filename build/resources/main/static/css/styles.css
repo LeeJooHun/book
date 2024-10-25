@@ -10343,3 +10343,29 @@ display: flex;
                 height: 50px;
                 margin-right: 10px;
         }
+
+.pagination .page-link {
+    color: black; /* 글자 색을 흰색으로 설정 */
+    background-color: white; /* 배경을 검은색으로 설정 */
+    border: 1px solid #000; /* 테두리도 검은색 */
+}
+
+.pagination .page-item.active .page-link {
+    color: white; /* 글자 색을 흰색으로 설정 */
+        background-color: black; /* 배경을 검은색으로 설정 */
+}
+
+.pagination .page-link:hover {
+    background-color: #555; /* 마우스를 올렸을 때 어두운 회색으로 */
+    border-color: #555;
+}
+
+.pagination .page-link:focus {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.5); /* 포커스 시 검은색 그림자 */
+}
+
+.pagination .page-item.disabled .page-link {
+    background-color: #000;
+    color: #666; /* 비활성화된 버튼의 글자 색을 회색으로 */
+    border-color: #000;
+}

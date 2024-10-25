@@ -31,6 +31,9 @@ public class Book {
     @Column
     private int ratingCount;
 
+    @Column
+    private boolean bookClub;
+
     @OneToMany(mappedBy = "book")
     private List<Review> reviews;
 }

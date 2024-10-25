@@ -48,10 +48,11 @@
             <h4 style="display: inline-block; margin: 0 0 5px 0;">({{size}}명)</h4>
             <h1>
                 <button class="review-button" id="openModalBtn">리뷰 남기기</button>
+                <button class="review-button" id="bookClubBtn" data-book-isbn="{{book.isbn}}">독서 모임 책 지정</button>
             </h1>
 
             <p class="review-date; margin: 0 0 10px 0;">{{{book.description}}}</p>
-        </div>z
+        </div>
     </div>
     <hr>
 
@@ -61,9 +62,16 @@
                 <div class="review-header">
                     <img src="/images/{{user.id}}">
                     <a href="/mypage/{{user.id}}"><span>{{user.name}}</span></a>
-                    <div class="bi-star-fill">{{rating}}</div>
+                    <div class="bi-star-fill" style="margin-right: 10px;">{{rating}}</div>
+                    <i class="fa-regular fa-heart like-heart"
+                       data-review-id="{{id}}"
+                       data-user-id="{{user.id}}"
+                       data-heartClicked="{{heartClicked}}"></i>
+                    <span class="heart-size">{{heartSize}}</span>
+                </div>
                 </div>
                 <p class="review-date">{{date}}</p>
+
                 <div class="review-content">
                     <p>{{content}}</p>
 
@@ -76,12 +84,64 @@
                         </form>
                     </div>
                     {{/isOwner}}
+                    <hr>
+
+                <div class="review-actions">
+                    <button class="comment-reply" data-isbn="{{isbn}}" data-review-id="{{id}}">댓글 작성</button>
+                </div>
+
+                    <div class="comment-section">
+                        {{#comments}}
+                            <div class="review">
+                                <div class="review-header">
+                                    <img src="/images/{{user.id}}">
+                                    <a href="/mypage/{{user.id}}"><span>{{user.name}}</span></a>
+                                </div>
+                                <p class="review-date">{{date}}</p>
+                                <div class="review-content">
+                                    <p>{{content}}</p>
+                                    {{#isOwner}}
+                                        <div class="review-actions">
+                                            <button class="comment-edit" data-content="{{content}}" data-comment-id="{{id}}">수정</button>
+                                            <form action="/comment/delete/{{isbn}}/{{id}}" method="post" onsubmit="return confirm('댓글을 삭제하시겠습니까?')">
+                                                <button type="submit" class="comment-delete">삭제</button>
+                                            </form>
+                                        </div>
+                                    {{/isOwner}}
+                                    <hr>
+                                </div>
+                            </div>
+                        {{/comments}}
+
+                    </div>
 
                 </div>
-            </div>
         {{/reviewList}}
     </div>
 </div>
+
+<form class="container" action="/review/create" method="post">
+    <div id="myModal2" class="modal">
+        <div class="modal-content">
+            <span class="close" data-modal="myModal2">&times;</span>
+            <h2 id="modalTitle">리뷰 남기기</h2>
+            <div class="stars">
+                <span data-value="1">&#9733;</span>
+                <span data-value="2">&#9733;</span>
+                <span data-value="3">&#9733;</span>
+                <span data-value="4">&#9733;</span>
+                <span data-value="5">&#9733;</span>
+                <input type="hidden" name="rating" value="0">
+                <input type="hidden" name="isbn" value="">
+                <input type="hidden" name="title" value="">
+                <input type="hidden" name="image" value="">
+                <span>0</span>
+            </div>
+            <textarea class="review-text" name="content" placeholder="책에 관한 리뷰글을 써 주세요."></textarea>
+            <button type="submit" class="submit-button">작성완료</button>
+        </div>
+    </div>
+</form>
 
 <form class="container" action="/review/update" method="post">
     <div id="myModal" class="modal">
@@ -107,28 +167,41 @@
     </div>
 </form>
 
-<form class="container" action="/review/create" method="post">
-    <div id="myModal2" class="modal">
+<form class="container" action="/comment/create/{{book.isbn}}" method="post">
+    <div id="commentModal" class="modal">
         <div class="modal-content">
-            <span class="close" data-modal="myModal2">&times;</span>
-            <h2 id="modalTitle">리뷰 남기기</h2>
-            <div class="stars">
-                <span data-value="1">&#9733;</span>
-                <span data-value="2">&#9733;</span>
-                <span data-value="3">&#9733;</span>
-                <span data-value="4">&#9733;</span>
-                <span data-value="5">&#9733;</span>
-                <input type="hidden" name="rating" value="0">
-                <input type="hidden" name="isbn" value="">
-                <input type="hidden" name="title" value="">
-                <input type="hidden" name="image" value="">
-                <span>0</span>
-            </div>
-            <textarea class="review-text" name="content" placeholder="책에 관한 리뷰글을 써 주세요."></textarea>
+            <span class="close" data-modal="commentModal">&times;</span>
+            <h2>댓글 남기기</h2>
+
+            <textarea class="review-text" name="content" placeholder="댓글을 입력하세요."></textarea>
+            <input type="hidden" name="reviewId" value="">
+
+            <!-- 제출 버튼 -->
             <button type="submit" class="submit-button">작성완료</button>
         </div>
     </div>
 </form>
+
+<form class="container" action="/comment/update/{{book.isbn}}" method="post">
+    <div id="commentModal" class="modal">
+        <div class="modal-content">
+            <span class="close" data-modal="commentModal">&times;</span>
+            <h2>댓글 남기기</h2>
+
+            <!-- 댓글 입력란 -->
+            <textarea class="review-text" name="content" placeholder="댓글을 입력하세요."></textarea>
+            <input type="hidden" name="commentId" value="">
+
+            <!-- 제출 버튼 -->
+            <button type="submit" class="submit-button">작성완료</button>
+        </div>
+    </div>
+</form>
+
+
+<footer class="py-5 bg-dark">
+    <div class=""><p class="m-0 text-center text-white"></p></div>
+</footer>
 
 <script>
     var modals = document.querySelectorAll('.modal');
@@ -214,6 +287,124 @@
     function confirmDelete() {
         return confirm("나 삭제할꼬얌?");
     }
+
+    var heartIcons = document.querySelectorAll(".like-heart");
+
+    heartIcons.forEach(heartIcon => {
+        const heartClicked = heartIcon.getAttribute("data-heartClicked");
+        const heartSizeElement = heartIcon.nextElementSibling; // heartSize가 있는 DOM 요소
+
+        if (heartClicked === "true") {
+            heartIcon.classList.add('fa-solid');
+            heartIcon.classList.remove('fa-regular');
+            heartIcon.classList.add('active');
+        } else {
+            heartIcon.classList.add('fa-regular');
+            heartIcon.classList.remove('fa-solid');
+            heartIcon.classList.remove('active');
+        }
+
+        heartIcon.addEventListener('click', function() {
+            const isHeartClicked = heartIcon.classList.contains('fa-solid'); // 현재 하트 상태 확인
+            const reviewId = this.getAttribute("data-review-id"); // 리뷰 ID
+            const userId = this.getAttribute("data-user-id"); // 사용자 ID
+            let heartSize = parseInt(heartSizeElement.textContent); // heartSize 값을 가져옴
+
+            // 하트 상태를 토글
+            heartIcon.classList.toggle('fa-solid');
+            heartIcon.classList.toggle('fa-regular');
+            heartIcon.classList.toggle('active');
+
+            // heartSize 값 변경
+            if (isHeartClicked) {
+                heartSize--; // 하트를 취소한 경우 감소
+            } else {
+                heartSize++; // 하트를 누른 경우 증가
+            }
+
+            heartSizeElement.textContent = heartSize; // heartSize 값을 업데이트
+
+            // AJAX 요청
+            fetch('/heart', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ reviewId: reviewId, userId: userId, heartClicked: !isHeartClicked })
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        });
+    });
+
+    document.getElementById('bookClubBtn').addEventListener('click', function() {
+        const bookIsbn = this.getAttribute('data-book-isbn'); // 책 ID 가져오기
+
+        // AJAX 요청
+        fetch(`/book-club/${bookIsbn}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ bookClub: true })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                alert('책이 독서 모임 책으로 지정되었습니다.');
+            } else {
+                alert('오류가 발생했습니다.');
+            }
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
+    });
+
+document.querySelectorAll('.comment-reply').forEach(link => {
+        link.addEventListener('click', function(event) {
+            event.preventDefault(); // 기본 동작 방지
+
+            const modal = document.getElementById('commentModal');
+            const reviewId = this.getAttribute('data-review-id');
+
+            // 리뷰 ID를 모달의 hidden input에 설정
+            modal.querySelector("input[name='reviewId']").value = reviewId;
+
+            // 모달 열기
+            modal.style.display = "block";
+        });
+    });
+
+    document.querySelectorAll('.comment-edit').forEach(button => {
+    button.addEventListener('click', function(event) {
+        event.preventDefault(); // 기본 동작 방지
+
+        const modal = document.getElementById('commentModal');
+        const commentContent = this.getAttribute('data-content'); // 수정할 댓글 내용
+        const commentId = this.getAttribute('data-comment-id'); // 수정할 댓글 ID
+
+        // 댓글 내용을 모달의 textarea에 설정
+        modal.querySelector("textarea[name='content']").value = commentContent;
+
+        // 댓글 ID를 모달의 hidden input에 설정
+        const hiddenInput = modal.querySelector("input[name='commentId']");
+        if (hiddenInput) {
+            hiddenInput.value = commentId; // ID 설정
+        } else {
+            console.error("Hidden input not found in modal.");
+        }
+
+        // 모달 열기
+        modal.style.display = "block";
+    });
+});
+
 </script>
 </body>
 </html>

@@ -5,6 +5,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -34,13 +36,25 @@ public class Review {
     @JoinColumn(name = "book_id", nullable = false)
     private Book book;
 
+    @Column
+    private boolean isOwner = false;
+
+    @Column
+    private boolean heartClicked = false;
+
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Heart> hearts = new ArrayList<>();
+
+    @Column
+    private int heartSize;
+
+    @OneToMany
+    private List<Comment> comments = new ArrayList<>();
+
     @PrePersist
     protected void onCreate() {
         date = LocalDate.now();
     }
-
-    @Column
-    private boolean isOwner = false;
 
     public ReviewDto toDto(String isbn, String title, String image){
         return new ReviewDto(id, isbn, content, rating, title, image, user);
